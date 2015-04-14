@@ -1,0 +1,12 @@
+#!/bin/bash
+
+while :
+do 
+  sleep 1
+  oldload=${load}
+  load=$(uptime | awk '{print $8 $9 $10}')
+  if [ "$oldload" != "$load" ]; then
+     timestamp=$(date +"%s")
+     mosquitto_pub -r -t "systems/${HOSTNAME}/load" -m "{\"timestamp\":${timestamp},\"values\":[${load// /,}]}"
+  fi
+done
